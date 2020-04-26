@@ -2,16 +2,10 @@
 import { AngularFireAuth } from 'angularfire2/auth';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-//import { AngularFireModule } from '@angular/fire';
-
-
 import {AngularFireModule} from 'angularfire2';
-
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { RouterModule } from '@angular/router';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from 'src/environments/environment';
@@ -61,7 +55,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ]),
     NgbModule
   ],
-  providers: [AngularFireAuth],
+  providers: [
+    AngularFireAuth
+  ],
   bootstrap: [AppComponent]
 })
 
