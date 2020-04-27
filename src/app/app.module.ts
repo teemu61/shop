@@ -1,9 +1,9 @@
-
 import { AngularFireAuth } from 'angularfire2/auth';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {AngularFireModule} from 'angularfire2';
+import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +21,7 @@ import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.componen
 import { LoginComponent } from './login/login.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthGuardService as AuthGuard, AuthGuardService } from './auth-guard.service';
+import { UserService } from './user.service';
 
 
 @NgModule({
@@ -61,7 +62,9 @@ import { AuthGuardService as AuthGuard, AuthGuardService } from './auth-guard.se
   ],
   providers: [
     AngularFireAuth,
-    AuthGuard
+    AngularFireDatabase,
+    AuthGuard,
+    UserService
   ],
   bootstrap: [AppComponent]
 })
