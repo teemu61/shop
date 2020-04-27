@@ -17,6 +17,7 @@ export class AppComponent {
     /* no need to unsubscribe since app is root component */
     auth.user$.subscribe(user => {
       if (user) {
+        console.log("save user to db...")
         userService.save(user);
 
         let returnUrl = localStorage.getItem('returnUrl');

@@ -5,6 +5,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFirestore } from 'angularfire2/firestore';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -64,7 +65,8 @@ import { UserService } from './user.service';
     AngularFireAuth,
     AngularFireDatabase,
     AuthGuard,
-    UserService
+    UserService,
+    AngularFirestore
   ],
   bootstrap: [AppComponent]
 })
