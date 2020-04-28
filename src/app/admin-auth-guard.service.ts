@@ -15,12 +15,11 @@ export class AdminAuthGuard implements CanActivate {
   constructor(private auth: AuthService, private userService: UserService) { }
 
   canActivate(): Observable<boolean> {
-    return this.auth.user$
-    //map firebase.User -> AppUser
-    .pipe(switchMap(user => this.userService.get(user.uid).valueChanges()))
+    return this.auth.appUser$
     //map AppUser -> isAdmin
     .pipe(map(appUser => appUser.isAdmin));
   }
+
 }
 
  

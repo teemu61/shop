@@ -16,19 +16,34 @@ export class UserService {
 
   save(user: firebase.User) {
     console.log("save called...");
-    console.log("user.uid is: " + user.uid);
-    
-    let entry = { name: user.displayName, email: user.email };
+
+    let entry = {
+      name: user.displayName,
+      email: user.email
+    };
+
     let url = '/users/' + user.uid;
 
-    /* new db document created each time */
-    this.firestore
-      .collection('users')
-      .doc(user.uid)
-      .set(entry);
+    /* in case of existing admin user the db is updated, otherwise new entry is created */
+    this.firestore.collection(`users`, ref => ref.where('isAdmin', "==", true)).snapshotChanges().subscribe(res => {
+      if (res.length > 0) {
+        console.log("update existing entry in db...");
+        this.firestore
+          .collection('users')
+          .doc(user.uid)
+          .update(entry);
+      }
+      else {
+        console.log("create a new entry in db...");
+        this.firestore
+          .collection('users')
+          .doc(user.uid)
+          .set(entry);
+      }
+    });
   }
 
-  get(uid: string) : AngularFireObject<AppUser>{
+  get(uid: string): AngularFireObject<AppUser> {
     return this.db.object('/users/' + uid);
   }
 
