@@ -19,7 +19,7 @@
                 </li>
             </ng-template>
 
-            <!-- dropdown list is displayed if user is logged-->
+            <!-- dropdown list is displayed if user is logged. AuthService is injected to bs-navbar.component.ts -->
             <li *ngIf="auth.user$ | async as user; else anonymousUser" ngbDropdown class="nav-item dropdown">
                 <a ngbDropdownToggle class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">{{ user?.displayName }}</a>

@@ -16,7 +16,9 @@ export class AdminAuthGuard implements CanActivate {
 
   canActivate(): Observable<boolean> {
     return this.auth.user$
+    //map firebase.User -> AppUser
     .pipe(switchMap(user => this.userService.get(user.uid).valueChanges()))
+    //map AppUser -> isAdmin
     .pipe(map(appUser => appUser.isAdmin));
   }
 }

@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class AuthService {
 
+ /*  this Observable<firebase.User> is used in other components to get user identity */
   user$: Observable<firebase.User>;
 
   constructor(public afAuth: AngularFireAuth, private route: ActivatedRoute) { 

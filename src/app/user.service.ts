@@ -17,11 +17,9 @@ export class UserService {
   save(user: firebase.User) {
     console.log("save called...");
     console.log("user.uid is: " + user.uid);
-
+    
     let entry = { name: user.displayName, email: user.email };
     let url = '/users/' + user.uid;
-    console.log("url is: " + url);
-    console.log("entry is: ", entry);
 
     /* new db document created each time */
     this.firestore
