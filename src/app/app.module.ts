@@ -1,3 +1,4 @@
+import { AdminAuthGuard } from './admin-auth-guard.service';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -23,6 +24,7 @@ import { LoginComponent } from './login/login.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthGuardService as AuthGuard, AuthGuardService } from './auth-guard.service';
 import { UserService } from './user.service';
+import { map, switchMap } from 'rxjs/operators';
 
 
 @NgModule({
@@ -65,6 +67,7 @@ import { UserService } from './user.service';
     AngularFireAuth,
     AngularFireDatabase,
     AuthGuard,
+    AdminAuthGuard,
     UserService,
     AngularFirestore
   ],
