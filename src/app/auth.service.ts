@@ -1,4 +1,5 @@
 import { switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
@@ -12,8 +13,9 @@ import { UserService } from './user.service';
 })
 export class AuthService {
 
-  /*  this Observable<firebase.User> is used in other components to get user identity */
   user$: Observable<firebase.User>;
+  appUser: AppUser;
+  
 
   constructor(
     private userService: UserService,
@@ -21,7 +23,7 @@ export class AuthService {
     private route: ActivatedRoute) { this.user$ = afAuth.authState; }
 
   login() {
-    console.log("login called...")
+    console.log("login called...");
     let returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/';
     localStorage.setItem('returnUrl', returnUrl);
 
@@ -30,13 +32,17 @@ export class AuthService {
   }
 
   logout() {
-    console.log("logout called...")
+    console.log("logout called...");
     this.afAuth.auth.signOut();
   }
 
   get appUser$(): Observable<AppUser> {
+    console.log("get appUser$ called...");
     return this.user$
-      .pipe(switchMap(user => this.userService.get(user.uid).valueChanges()))
+      .pipe(switchMap(user => {
+          return this.userService.get(user.uid);
+      })
+      )
   }
 
 }

@@ -1,11 +1,12 @@
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { AppUser } from './models/app-user';
-import { Injectable } from '@angular/core';
+import { Injectable, ɵSWITCH_CHANGE_DETECTOR_REF_FACTORY__POST_R3__ } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import * as firebase from 'firebase';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { AngularFireObject } from '@angular/fire/database/database';
 import { map, switchMap } from 'rxjs/operators';
+import { of } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,12 @@ import { map, switchMap } from 'rxjs/operators';
 export class UserService {
 
   constructor(private db: AngularFireDatabase, private firestore: AngularFirestore) { }
+
+  // appUser: AppUser = {
+  //   name: "",
+  //   email: "",
+  //   isAdmin: false
+  // };
 
   save(user: firebase.User) {
     console.log("save called...");
@@ -43,8 +50,35 @@ export class UserService {
     });
   }
 
-  get(uid: string): AngularFireObject<AppUser> {
-    return this.db.object('/users/' + uid);
+  get(uid: string): Observable<AppUser> {
+    console.log("UserService#get called. uid: " + uid);
+
+    let appUser: AppUser = {
+      name: "",
+      email: "",
+      isAdmin: false
+    };
+
+    this.firestore.collection('users').doc(uid).get().toPromise()
+      .then((snapshot) => this.getAppUser(snapshot, appUser));
+    return this.getObserver(appUser);
+  }
+
+  private getAppUser(snapshot: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>, appUser: AppUser) {
+    let data = snapshot.data();
+    appUser.email = data.email;
+    appUser.name = data.name;
+    let isAdmin = data.isAdmin;
+    if (isAdmin != null)
+      appUser.isAdmin = isAdmin;
+    console.log("appUser is: ", appUser);
+  }
+
+  public getObserver(appUser): any {
+    const userObservable = new Observable<AppUser>(observer => {
+      return observer.next(appUser);
+    })
+    return userObservable;
   }
 
 }

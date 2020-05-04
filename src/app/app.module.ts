@@ -1,4 +1,4 @@
-import { AdminAuthGuard } from './admin-auth-guard.service';
+import { AdminAuthGuardService } from './admin-auth-guard.service';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -22,7 +22,7 @@ import { AdminProductsComponent } from './admin/admin-products/admin-products.co
 import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.component';
 import { LoginComponent } from './login/login.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AuthGuardService as AuthGuard, AuthGuardService } from './auth-guard.service';
+import { AuthGuardService } from './auth-guard.service';
 import { UserService } from './user.service';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -54,20 +54,20 @@ import { map, switchMap } from 'rxjs/operators';
       { path: 'shopping-cart', component: ShoppingCartComponent},
       { path: 'login', component: LoginComponent},
       /* routes for normal users */
-      { path: 'check-out', component: CheckOutComponent, canActivate: [AuthGuard]},
-      { path: 'order-success', component: OrderSuccessComponent, canActivate: [AuthGuard]},
-      { path: 'my/orders', component: MyOrdersComponent, canActivate: [AuthGuard]},
+      { path: 'check-out', component: CheckOutComponent, canActivate: [AuthGuardService]},
+      { path: 'order-success', component: OrderSuccessComponent, canActivate: [AuthGuardService]},
+      { path: 'my/orders', component: MyOrdersComponent, canActivate: [AuthGuardService]},
       /* routes for admin users */
-      { path: 'admin/products', component: AdminProductsComponent, canActivate: [AuthGuard] },
-      { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AuthGuard]}
+      { path: 'admin/products', component: AdminProductsComponent, canActivate: [AuthGuardService, AdminAuthGuardService] },
+      { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AuthGuardService, AdminAuthGuardService]}
     ]),
     NgbModule
   ],
   providers: [
     AngularFireAuth,
     AngularFireDatabase,
-    AuthGuard,
-    AdminAuthGuard,
+    AuthGuardService,
+    AdminAuthGuardService,
     UserService,
     AngularFirestore
   ],
