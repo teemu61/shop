@@ -15,12 +15,6 @@ export class UserService {
 
   constructor(private db: AngularFireDatabase, private firestore: AngularFirestore) { }
 
-  // appUser: AppUser = {
-  //   name: "",
-  //   email: "",
-  //   isAdmin: false
-  // };
-
   save(user: firebase.User) {
     console.log("save called...");
 
