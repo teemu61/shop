@@ -69,10 +69,10 @@ export class UserService {
   }
 
   public getObserver(appUser): any {
-    const userObservable = new Observable<AppUser>(observer => {
+    return new Observable<AppUser>(observer => {
       return observer.next(appUser);
     })
-    return userObservable;
+
   }
 
 }
