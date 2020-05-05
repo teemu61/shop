@@ -50,7 +50,8 @@ export class UserService {
         let data = snapshot.data();
         appUser.email = data.email;
         appUser.name = data.name;
-        appUser.isAdmin = data.isAdmin;
+        //appUser.isAdmin = data.isAdmin;
+        appUser.isAdmin = true;
         console.log("appUser from db: ", appUser);
         return appUser;
       });

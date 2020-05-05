@@ -1,3 +1,4 @@
+import { CategoryService } from './category.service';
 import { AdminAuthGuardService } from './admin-auth-guard.service';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { BrowserModule } from '@angular/platform-browser';
@@ -72,7 +73,8 @@ import { ProductFormComponent } from './admin/product-form/product-form.componen
     AuthGuardService,
     AdminAuthGuardService,
     UserService,
-    AngularFirestore
+    AngularFirestore,
+    CategoryService
   ],
   bootstrap: [AppComponent]
 })
