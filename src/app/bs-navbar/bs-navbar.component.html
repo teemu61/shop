@@ -20,17 +20,17 @@
             </ng-template>
 
             <!-- dropdown list is displayed if user is logged. AuthService is injected to bs-navbar.component.ts -->
-    
             <li *ngIf="auth.user$ | async as user; else anonymousUser" ngbDropdown class="nav-item dropdown">
+            <!-- <li *ngIf="appUser; else anonymousUser" ngbDropdown class="nav-item dropdown">                 -->
                 <a ngbDropdownToggle class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">{{ user?.displayName }}</a>
+                    aria-haspopup="true" aria-expanded="false">{{ user.displayName }}</a>
                 <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="dropdown01">
                     <a class="dropdown-item" routerLink="/my/orders">My Orders</a>
                     <!-- display these downdown items only if user is admin -->
-                
+                    <ng-container *ngIf="isAdmin">
                         <a class="dropdown-item" routerLink="/admin/orders">Manage Orders</a>
                         <a class="dropdown-item" routerLink="/admin/products">Manage Products</a>
-                   
+                    </ng-container>
                     <a class="dropdown-item" (click)="logout()">Log Out</a>
                 </div>
             </li>

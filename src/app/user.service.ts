@@ -15,14 +15,11 @@ export class UserService {
 
   constructor(private db: AngularFireDatabase, private firestore: AngularFirestore) { }
 
+
   save(user: firebase.User) {
     console.log("save called...");
 
-    let entry = {
-      name: user.displayName,
-      email: user.email
-    };
-
+    let entry = { name: user.displayName, email: user.email };
     let url = '/users/' + user.uid;
 
     /* in case of existing admin user the db is updated, otherwise new entry is created */
@@ -45,34 +42,20 @@ export class UserService {
   }
 
   get(uid: string): Observable<AppUser> {
-    console.log("UserService#get called. uid: " + uid);
 
-    let appUser: AppUser = {
-      name: "",
-      email: "",
-      isAdmin: false
-    };
+    let appUser: AppUser = { name: "", email: "", isAdmin: false };
 
-    this.firestore.collection('users').doc(uid).get().toPromise()
-      .then((snapshot) => this.getAppUser(snapshot, appUser));
-    return this.getObserver(appUser);
-  }
+    let promise = this.firestore.collection('users').doc(uid).get().toPromise()
+      .then((snapshot) => {
+        let data = snapshot.data();
+        appUser.email = data.email;
+        appUser.name = data.name;
+        appUser.isAdmin = data.isAdmin;
+        console.log("appUser from db: ", appUser);
+        return appUser;
+      });
 
-  private getAppUser(snapshot: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>, appUser: AppUser) {
-    let data = snapshot.data();
-    appUser.email = data.email;
-    appUser.name = data.name;
-    let isAdmin = data.isAdmin;
-    if (isAdmin != null)
-      appUser.isAdmin = isAdmin;
-    console.log("appUser is: ", appUser);
-  }
-
-  public getObserver(appUser): any {
-    return new Observable<AppUser>(observer => {
-      return observer.next(appUser);
-    })
-
+      return from(promise);
   }
 
 }

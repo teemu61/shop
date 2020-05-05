@@ -3,10 +3,11 @@ import { map } from 'rxjs/operators';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
-import { Observable } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { AppUser } from './models/app-user';
 import { UserService } from './user.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,7 @@ import { UserService } from './user.service';
 export class AuthService {
 
   user$: Observable<firebase.User>;
-  appUser: AppUser;
   
-
   constructor(
     private userService: UserService,
     public afAuth: AngularFireAuth,
@@ -37,9 +36,12 @@ export class AuthService {
   }
 
   get appUser$(): Observable<AppUser> {
-    console.log("get appUser$ called...");
+    console.log("AuthService get appUser called...");
+
     return this.user$
       .pipe(switchMap(user => {
+          if ( user == null)
+              return EMPTY;
           return this.userService.get(user.uid);
       })
       )
