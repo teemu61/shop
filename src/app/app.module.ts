@@ -25,6 +25,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthGuardService } from './auth-guard.service';
 import { UserService } from './user.service';
 import { map, switchMap } from 'rxjs/operators';
+import { ProductFormComponent } from './admin/product-form/product-form.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { map, switchMap } from 'rxjs/operators';
     MyOrdersComponent,
     AdminProductsComponent,
     AdminOrdersComponent,
-    LoginComponent
+    LoginComponent,
+    ProductFormComponent
   ],
   imports: [
     BrowserModule,
@@ -59,6 +61,7 @@ import { map, switchMap } from 'rxjs/operators';
       { path: 'my/orders', component: MyOrdersComponent, canActivate: [AuthGuardService]},
       /* routes for admin users */
       { path: 'admin/products', component: AdminProductsComponent, canActivate: [AuthGuardService, AdminAuthGuardService] },
+      { path: 'admin/products/new', component: ProductFormComponent, canActivate: [AuthGuardService, AdminAuthGuardService] },
       { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AuthGuardService, AdminAuthGuardService]}
     ]),
     NgbModule
