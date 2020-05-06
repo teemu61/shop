@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
 
+export interface Category {name: string, id: string };
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,10 +13,15 @@ export class CategoryService {
   constructor(private firestore: AngularFirestore) { }
 
   getCategories() {
-    return this.firestore
+
+      return this.firestore
       .collection('categories')
-      .valueChanges();
+      .snapshotChanges().pipe(map(actions => {
+        return actions.map(n => {
+          const data = n.payload.doc.data() as Category;
+          const id = n.payload.doc.id;
+          return {id, ...data};
+        })
+      }))
   }
-
-
 }
