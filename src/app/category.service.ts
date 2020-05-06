@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
 
-export interface Category {name: string, id: string };
+export interface Category {name: string };
 
 @Injectable({
   providedIn: 'root'
