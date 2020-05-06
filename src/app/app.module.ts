@@ -27,6 +27,7 @@ import { AuthGuardService } from './auth-guard.service';
 import { UserService } from './user.service';
 import { map, switchMap } from 'rxjs/operators';
 import { ProductFormComponent } from './admin/product-form/product-form.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -65,7 +66,8 @@ import { ProductFormComponent } from './admin/product-form/product-form.componen
       { path: 'admin/products/new', component: ProductFormComponent, canActivate: [AuthGuardService, AdminAuthGuardService] },
       { path: 'admin/orders', component: AdminOrdersComponent, canActivate: [AuthGuardService, AdminAuthGuardService]}
     ]),
-    NgbModule
+    NgbModule,
+    FormsModule
   ],
   providers: [
     AngularFireAuth,

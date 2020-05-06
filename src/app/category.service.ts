@@ -13,10 +13,8 @@ export class CategoryService {
   getCategories() {
     return this.firestore
       .collection('categories')
-      .valueChanges()
-      .pipe(map(n => n.sort()));
+      .valueChanges();
   }
-
 
 
 }

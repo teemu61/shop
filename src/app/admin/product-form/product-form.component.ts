@@ -14,6 +14,11 @@ export class ProductFormComponent implements OnInit {
     this.categories$ = categoryService.getCategories();
    }
 
+   save(product) {
+     console.log("ProductFormComponent save called...");
+     console.log("product is: ",product)
+   }
+
   ngOnInit(): void {
   }
 
