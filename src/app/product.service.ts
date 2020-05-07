@@ -5,6 +5,8 @@ import { AngularFirestore } from 'angularfire2/firestore';
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class ProductService {
 
   constructor(private firestore: AngularFirestore) { }
@@ -20,4 +22,12 @@ export class ProductService {
     .doc(id)
     .set(product);
   }
+
+  getAll() {
+    console.log("ProductService getAll called...");
+    return this.firestore.collection('products').valueChanges();
+  }
+
+
+
 }
