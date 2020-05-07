@@ -13,7 +13,7 @@ import { take } from 'rxjs/operators';
 export class ProductFormComponent {
 
   categories$;
-  product = {title: "", price: 0, category: "", imageUrl: ""};
+  product = { title: "", price: 0, category: "", imageUrl: "" };
   id;
 
   constructor(
@@ -21,22 +21,25 @@ export class ProductFormComponent {
     private route: ActivatedRoute,
     private categoryService: CategoryService,
     private productService: ProductService) {
-      this.categories$ = categoryService.getCategories();
+    this.categories$ = categoryService.getCategories();
 
-      console.log("route.snaphot is: ", this.route.snapshot);
-      this.id = this.route.snapshot.paramMap.get('id');
-      console.log("product id from snapshot is: "+this.id);
-      if (this.id) this.productService.get(this.id).pipe(take(1)).subscribe(p => this.product = p);
+    console.log("route.snaphot is: ", this.route.snapshot);
+    this.id = this.route.snapshot.paramMap.get('id');
+    console.log("product id from snapshot is: " + this.id);
+    if (this.id) this.productService.get(this.id).pipe(take(1)).subscribe(p => this.product = p);
 
   }
 
   save(product) {
-
     if (this.id) this.productService.update(this.id, product);
     else this.productService.create(product);
-
     this.router.navigate(['/admin/products']);
   }
 
+  delete() {
+    if (!confirm('Are you sure to delete this product?')) return;
+    this.productService.delete(this.id);
+    this.router.navigate(['/admin/products']);
+  }
 
 }

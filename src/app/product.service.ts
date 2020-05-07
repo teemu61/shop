@@ -14,6 +14,16 @@ export class ProductService {
 
   constructor(private firestore: AngularFirestore) { }
 
+
+  delete(productId) {
+
+    console.log("delete product called. productId: " + productId);
+    this.firestore
+    .collection('products')
+    .doc(productId)
+    .delete();
+  }
+
   update(productId, product) {
 
     console.log("update product called. productId: " + productId);
