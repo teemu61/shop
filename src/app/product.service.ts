@@ -14,22 +14,25 @@ export class ProductService {
 
   constructor(private firestore: AngularFirestore) { }
 
+  update(productId, product) {
+
+    console.log("update product called. productId: " + productId);
+    this.firestore
+    .collection('products')
+    .doc(productId)
+    .update(product);
+  }
+
   create(product) {
 
     console.log("create product called...");
     //create random id
     const id = this.firestore.createId();
-
     this.firestore
       .collection('products')
       .doc(id)
       .set(product);
   }
-
-  // getAll() {
-  //   console.log("ProductService getAll called...");
-  //   return this.firestore.collection('products').valueChanges();
-  // }
 
   getAll() {
 
@@ -48,7 +51,6 @@ export class ProductService {
         })
       })
 
-
     return this.firestore
       .collection('products')
       .snapshotChanges().pipe(map(actions => {
@@ -62,8 +64,7 @@ export class ProductService {
 
   get(productId: string): Observable<Product> {
 
-    console.log("get called with productId: " + productId);
-
+    console.log("product get called. productId: " + productId);
     let promise = this.firestore.collection('products').doc(productId).get().toPromise()
       .then((snapshot) => {
         return snapshot.data() as Product;

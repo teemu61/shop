@@ -14,6 +14,7 @@ export class ProductFormComponent {
 
   categories$;
   product = {title: "", price: 0, category: "", imageUrl: ""};
+  id;
 
   constructor(
     private router: Router,
@@ -23,14 +24,17 @@ export class ProductFormComponent {
       this.categories$ = categoryService.getCategories();
 
       console.log("route.snaphot is: ", this.route.snapshot);
-      let id = this.route.snapshot.paramMap.get('id');
-      console.log("product id from snapshot is: "+id);
-      if (id) this.productService.get(id).pipe(take(1)).subscribe(p => this.product = p);
+      this.id = this.route.snapshot.paramMap.get('id');
+      console.log("product id from snapshot is: "+this.id);
+      if (this.id) this.productService.get(this.id).pipe(take(1)).subscribe(p => this.product = p);
 
   }
 
   save(product) {
-    this.productService.create(product);
+
+    if (this.id) this.productService.update(this.id, product);
+    else this.productService.create(product);
+
     this.router.navigate(['/admin/products']);
   }
 
