@@ -14,10 +14,9 @@ export class ProductService {
 
   constructor(private firestore: AngularFirestore) { }
 
-
   delete(productId) {
 
-    console.log("delete product called. productId: " + productId);
+    console.log("delete product called...");
     this.firestore
     .collection('products')
     .doc(productId)
@@ -26,7 +25,7 @@ export class ProductService {
 
   update(productId, product) {
 
-    console.log("update product called. productId: " + productId);
+    console.log("update product called...");
     this.firestore
     .collection('products')
     .doc(productId)
@@ -74,7 +73,7 @@ export class ProductService {
 
   get(productId: string): Observable<Product> {
 
-    console.log("product get called. productId: " + productId);
+    console.log("product get called....");
     let promise = this.firestore.collection('products').doc(productId).get().toPromise()
       .then((snapshot) => {
         return snapshot.data() as Product;

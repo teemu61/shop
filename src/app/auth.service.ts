@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   get appUser$(): Observable<AppUser> {
-    console.log("AuthService get appUser called...");
+    console.log("get appUser$ called...");
 
     return this.user$
       .pipe(switchMap(user => {

@@ -12,7 +12,7 @@ export class AuthGuardService implements CanActivate {
 
   canActivate(route, state: RouterStateSnapshot) {
 
-    console.log("AuthGuardService canActivate called...")
+    console.log("canActivate called...")
     return this.auth.user$.pipe(map(user => {
       if (user) return true;
 

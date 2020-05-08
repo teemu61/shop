@@ -43,6 +43,7 @@ export class UserService {
 
   get(uid: string): Observable<AppUser> {
 
+    console.log("get called...");
     let appUser: AppUser = { name: "", email: "", isAdmin: undefined };
 
     let promise = this.firestore.collection('users').doc(uid).get().toPromise()
