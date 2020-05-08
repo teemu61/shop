@@ -53,7 +53,7 @@ export class UserService {
         appUser.name = data.name;
         //appUser.isAdmin = data.isAdmin;
         appUser.isAdmin = true;
-        console.log("appUser from db: ", appUser);
+        //console.log("appUser from db: ", appUser);
         return appUser;
       });
 

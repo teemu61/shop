@@ -23,9 +23,9 @@ export class ProductFormComponent {
     private productService: ProductService) {
     this.categories$ = categoryService.getCategories();
 
-    console.log("route.snaphot is: ", this.route.snapshot);
     this.id = this.route.snapshot.paramMap.get('id');
-    console.log("product id from snapshot is: " + this.id);
+    console.log("snapshot.paramMap is: ", this.route.snapshot.paramMap)
+    /* due the use of take() no need to unsubscribe */
     if (this.id) this.productService.get(this.id).pipe(take(1)).subscribe(p => this.product = p);
 
   }
