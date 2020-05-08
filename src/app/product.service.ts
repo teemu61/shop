@@ -45,21 +45,6 @@ export class ProductService {
 
   getAll() {
 
-    // this.firestore
-    //   .collection('products')
-    //   .snapshotChanges().pipe(map(actions => {
-    //     return actions.map(n => {
-    //       const data = n.payload.doc.data() as Product;
-    //       const id = n.payload.doc.id;
-    //       return { id, ...data };
-    //     })
-    //   })).subscribe(n => {
-    //     n.forEach(k => {
-    //       console.log("id: " +k.id);
-    //       console.log("title: "+k.title);
-    //     })
-    //   })
-
     return this.firestore
       .collection('products')
       .snapshotChanges().pipe(map(actions => {
