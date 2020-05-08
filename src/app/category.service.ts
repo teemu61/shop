@@ -12,7 +12,7 @@ export class CategoryService {
 
   constructor(private firestore: AngularFirestore) { }
 
-  getCategories() {
+  getAll() {
       console.log("getCategories called....")
       return this.firestore
       .collection('categories')

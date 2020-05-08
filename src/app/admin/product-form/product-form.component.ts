@@ -21,7 +21,7 @@ export class ProductFormComponent {
     private route: ActivatedRoute,
     private categoryService: CategoryService,
     private productService: ProductService) {
-    this.categories$ = categoryService.getCategories();
+    this.categories$ = categoryService.getAll();
 
     this.id = this.route.snapshot.paramMap.get('id');
     console.log("snapshot.paramMap is: ", this.route.snapshot.paramMap)
