@@ -49,9 +49,9 @@ export class ProductService {
       .collection('products')
       .snapshotChanges().pipe(map(actions => {
         return actions.map(n => {
-          const data  = n.payload.doc.data() as Product;
-          const id = n.payload.doc.id;
-          return { id, ...data };
+          const product  = n.payload.doc.data() as Product;
+          product.id = n.payload.doc.id;
+          return product;
         })
       }))
   }

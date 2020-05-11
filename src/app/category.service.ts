@@ -2,8 +2,8 @@ import { AngularFireDatabaseModule, AngularFireDatabase } from '@angular/fire/da
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
+import { Category } from './models/category';
 
-export interface Category {name: string };
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +18,9 @@ export class CategoryService {
       .collection('categories')
       .snapshotChanges().pipe(map(actions => {
         return actions.map(n => {
-          const data = n.payload.doc.data() as Category;
-          const id = n.payload.doc.id;
-          return {id, ...data};
+          const category = n.payload.doc.data() as Category;
+          category.id = n.payload.doc.id;
+          return category;
         })
       }))
   }
