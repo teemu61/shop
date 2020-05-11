@@ -1,10 +1,8 @@
 import { switchMap } from 'rxjs/operators';
-import { CategoryService } from './../category.service';
 import { ProductService } from './../product.service';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Product } from '../models/product';
-
 
 @Component({
   selector: 'app-products',
@@ -14,15 +12,11 @@ import { Product } from '../models/product';
 export class ProductsComponent {
   products: Product[] = [];
   filteredProducts: Product[] = [];
-  categories$;
   category: string;
-
 
   constructor(
     route: ActivatedRoute,
-    productService: ProductService,
-
-    categoryService: CategoryService) {
+    productService: ProductService) {
 
     productService.getAll().pipe(
       /* muunna Observable<Product> --> Observable<QueryParamMap> */
@@ -36,9 +30,6 @@ export class ProductsComponent {
           this.products.filter(p => p.category === this.category) :
           this.products;
       });
-
-
-    this.categories$ = categoryService.getAll();
 
   }
 }
