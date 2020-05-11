@@ -1,23 +1,20 @@
 <div class="row">
+
     <div class="col-3">
-        <!-- ProductService voi asettaa category arvon, jota ProductFilter käyttää -->
+        <!-- aseta category arvo, jota ProductFilterComponent käyttää -->
         <app-product-filter [category]="category"></app-product-filter>
     </div>
+    
     <div class="col">
         <div class="row">
             <ng-container *ngFor="let p of filteredProducts; let i = index">
                 <div class="col">
-                    <div class="card" style="width: 18rem;">
-                        <img class="card-img-top" [src]="p.imageUrl">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ p.title }}</h5>
-                            <p class="card-text">{{ p.price | currency:'EUR':true }}</p>
-                            <a href="#" class="btn btn-primary">Add to Cart</a>
-                        </div>
-                    </div>
+                    <!-- aseta product arvo, jota ProductCardComponent käyttää   -->
+                    <app-product-card [product]="p"></app-product-card>
                 </div>
                 <div *ngIf="(i + 1) % 2 === 0" class="w-100"></div>
             </ng-container>
         </div>
     </div>
+    
 </div>
