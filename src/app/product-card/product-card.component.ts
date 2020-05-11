@@ -10,6 +10,7 @@ export class ProductCardComponent  {
 
   constructor() { }
   @Input('product') product: Product;
+  @Input('show-actions') showActions = true;
 
 
 }
