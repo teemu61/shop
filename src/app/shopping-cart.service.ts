@@ -44,17 +44,19 @@ export class ShoppingCartService  {
     return result.id;
   }
 
-  async addToCart(product: Product) {
-    console.log("addToCart called...");
-    let cartId = await this.getOrCreateCartId();
-
-    console.log("cartId is: " +cartId +", productId is: "+product.id);
-
-    let document = this.firestore
+  private getItem(cartId: string, productId: string) {
+    return this.firestore
     .collection('shopping-carts')
     .doc(cartId)
     .collection('items')
-    .doc(product.id);
+    .doc(productId);
+  }
+
+  async addToCart(product: Product) {
+    console.log("addToCart called...");
+    let cartId = await this.getOrCreateCartId();
+    console.log("cartId is: " +cartId +", productId is: "+product.id);
+    let document = this.getItem(cartId, product.id);
 
     document.snapshotChanges()
     .pipe(take(1))
@@ -63,7 +65,7 @@ export class ShoppingCartService  {
         let i = action.payload.data() as Item;
         let quantity = i.quantity + 1
         document.update({quantity: quantity});
-        console.log("incremented existing item in the shopping-cart: ", quantity);
+        console.log("quantity: ", quantity);
       } else {
         document.set( { quantity: 1, product: product });
         console.log("new product added to shopping-cart");
