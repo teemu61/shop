@@ -27,9 +27,7 @@ export class ProductService {
 
     console.log("update product called...");
     this.firestore
-    .collection('products')
-    .doc(productId)
-    .update(product);
+
   }
 
   create(product) {
