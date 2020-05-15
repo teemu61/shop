@@ -93,55 +93,30 @@ export class ShoppingCartService {
         ),
         flatMap(combined => combineLatest(combined))
       );
-
   }
-
 
   async addToCart(product: Product) {
     console.log("addToCart called...");
-    let cartId = await this.getOrCreateCartId();
-    console.log("cartId is: " + cartId + ", productId is: " + product.id);
-    let document = this.getItem(cartId, product.id);
-
-    document.snapshotChanges()
-      .pipe(take(1))
-      .subscribe(action => {
-        if (action.payload.exists) {
-          let i = action.payload.data() as Item;
-          let quantity = i.quantity + 1
-          document.update({ quantity: quantity });
-          console.log("quantity: ", quantity);
-        } else {
-          document.set({ quantity: 1, product: product });
-          console.log("new product added to shopping-cart");
-        }
-      });
+    this.updateItemQuantity(product, 1);
   }
 
-  async removeFromCart(product: Product) {
+  removeFromCart(product: Product) {
     console.log("removeFromCart called...");
-    let cartId = await this.getOrCreateCartId();
-    console.log("cartId is: " + cartId + ", productId is: " + product.id);
-    let document = this.getItem(cartId, product.id);
+    this.updateItemQuantity(product, -1);
+  }
 
+  private async updateItemQuantity(product: Product, change: number) {
+    let cartId = await this.getOrCreateCartId();
+    let document = this.getItem(cartId, product.id);
     document.snapshotChanges()
       .pipe(take(1))
       .subscribe(action => {
         if (action.payload.exists) {
           let i = action.payload.data() as Item;
-          let quantity = i.quantity - 1
+          let quantity = i.quantity + change
           document.update({ quantity: quantity });
-          console.log("quantity: ", quantity);
         } 
       });
   }
 
-  private getCart(cartId: string) {
-    console.log("getCart called...");
-    let promise = this.firestore.collection('shopping-carts').doc(cartId).get().toPromise()
-      .then((snapshot) => {
-        return snapshot.data() as ShoppingCart;
-      });
-    return promise;
-  }
 }
