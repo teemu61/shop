@@ -56,7 +56,7 @@ export class ShoppingCartService {
       .doc(productId)
   }
 
-  public async getKortti() {
+  public async getProductCart() {
     return this.getDocumentsWithSubcollection('shopping-carts', "items")
   }
 
