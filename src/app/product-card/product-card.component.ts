@@ -29,9 +29,10 @@ export class ProductCardComponent {
   getQuantity() {
 
     const productId = this.product.id;
-    let quantity: number;
+    let quantity: number = 0;
 
     if (this.shoppingCart != undefined) {
+
       this.shoppingCart[0].items.forEach(e => {
         if (e.id === this.product.id) {
           quantity = e.quantity;

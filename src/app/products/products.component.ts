@@ -40,7 +40,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     console.log("ngOnInit called...");
     let cart = await this.shoppingCartService.getKortti();
     this.subscription = cart.subscribe(cart => {
-      console.log("+++++ngOnInit: subscribe getKortti to get initial value of cart: ",cart);
+      //console.log("+++++ngOnInit: subscribe getKortti to get initial value of cart: ",cart);
       this.cart = cart;
     })
   }
