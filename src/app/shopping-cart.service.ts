@@ -56,7 +56,7 @@ export class ShoppingCartService {
       .doc(productId)
   }
 
-  public async getProductCart() {
+  public async getKortti() {
     return this.getDocumentsWithSubcollection('shopping-carts', "items")
   }
 
@@ -93,30 +93,55 @@ export class ShoppingCartService {
         ),
         flatMap(combined => combineLatest(combined))
       );
+
   }
+
 
   async addToCart(product: Product) {
     console.log("addToCart called...");
-    this.updateItemQuantity(product, 1);
-  }
-
-  removeFromCart(product: Product) {
-    console.log("removeFromCart called...");
-    this.updateItemQuantity(product, -1);
-  }
-
-  private async updateItemQuantity(product: Product, change: number) {
     let cartId = await this.getOrCreateCartId();
+    console.log("cartId is: " + cartId + ", productId is: " + product.id);
     let document = this.getItem(cartId, product.id);
+
     document.snapshotChanges()
       .pipe(take(1))
       .subscribe(action => {
         if (action.payload.exists) {
           let i = action.payload.data() as Item;
-          let quantity = i.quantity + change
+          let quantity = i.quantity + 1
           document.update({ quantity: quantity });
+          console.log("quantity: ", quantity);
+        } else {
+          document.set({ quantity: 1, product: product });
+          console.log("new product added to shopping-cart");
+        }
+      });
+  }
+
+  async removeFromCart(product: Product) {
+    console.log("removeFromCart called...");
+    let cartId = await this.getOrCreateCartId();
+    console.log("cartId is: " + cartId + ", productId is: " + product.id);
+    let document = this.getItem(cartId, product.id);
+
+    document.snapshotChanges()
+      .pipe(take(1))
+      .subscribe(action => {
+        if (action.payload.exists) {
+          let i = action.payload.data() as Item;
+          let quantity = i.quantity - 1
+          document.update({ quantity: quantity });
+          console.log("quantity: ", quantity);
         } 
       });
   }
 
+  private getCart(cartId: string) {
+    console.log("getCart called...");
+    let promise = this.firestore.collection('shopping-carts').doc(cartId).get().toPromise()
+      .then((snapshot) => {
+        return snapshot.data() as ShoppingCart;
+      });
+    return promise;
+  }
 }

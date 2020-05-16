@@ -1,3 +1,4 @@
+
 import { ShoppingCartService } from './../shopping-cart.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { Product } from '../models/product';
