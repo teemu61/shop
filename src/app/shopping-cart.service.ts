@@ -1,11 +1,11 @@
-import { AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/firestore';
 import { Item } from './models/item';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { ShoppingCart } from './models/shopping-cart';
 import { from, Observable, combineLatest } from 'rxjs';
 import { Product } from './models/product';
-import { map, take, flatMap } from 'rxjs/operators';
+import { map, take, flatMap, filter } from 'rxjs/operators';
 import { ConvertActionBindingResult } from '@angular/compiler/src/compiler_util/expression_converter';
 
 
@@ -69,17 +69,23 @@ export class ShoppingCartService {
     });
   }
 
-  getDocumentsWithSubcollection<T extends DocWithId>(
+
+
+
+  async getDocumentsWithSubcollection<T extends DocWithId>(
     collection: string,
     subCollection: string
   ) {
+    let cartId = await this.getOrCreateCartId();
     return this.firestore
       .collection(collection)
-      .snapshotChanges()
+      .snapshotChanges() 
       .pipe(
         map(this.convertSnapshots),
         map((documents: T[]) =>
-          documents.map(document => {
+          documents.filter(document => document.id == cartId)
+          .map(
+            document => {
             return this.firestore
               .collection(`${collection}/${document.id}/${subCollection}`)
               .snapshotChanges()
@@ -89,7 +95,10 @@ export class ShoppingCartService {
                   Object.assign(document, { [subCollection]: subdocuments })
                 )
               );
-          })
+          }
+          
+          
+          )
         ),
         flatMap(combined => combineLatest(combined))
       );
