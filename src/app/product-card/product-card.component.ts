@@ -28,7 +28,6 @@ export class ProductCardComponent {
 
   getQuantity() {
 
-    console.log("getQuantity called. this.shoppingCart: ",this.shoppingCart);
     const productId = this.product.id;
     let quantity: number = 0;
 
