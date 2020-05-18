@@ -1,11 +1,11 @@
 import { AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/firestore';
 import { Item } from './models/item';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { ShoppingCart } from './models/shopping-cart';
-import { from, Observable, combineLatest } from 'rxjs';
+import { Observable, combineLatest, of, from } from 'rxjs';
 import { Product } from './models/product';
-import { map, take, flatMap, filter } from 'rxjs/operators';
+import { map, take, flatMap, filter, mergeMap } from 'rxjs/operators';
 import { ConvertActionBindingResult } from '@angular/compiler/src/compiler_util/expression_converter';
 
 
@@ -56,10 +56,6 @@ export class ShoppingCartService {
       .doc(productId)
   }
 
-  public async getKortti() {
-    return this.getDocumentsWithSubcollection('shopping-carts', "items")
-  }
-
   convertSnapshots<T>(snaps) {
     return <T[]>snaps.map(snap => {
       return {
@@ -69,45 +65,49 @@ export class ShoppingCartService {
     });
   }
 
-
-
-
-  async getDocumentsWithSubcollection<T extends DocWithId>(
-    collection: string,
-    subCollection: string
-  ) {
+  async getKortti<ShoppingCart>() {
     let cartId = await this.getOrCreateCartId();
-    return this.firestore
-      .collection(collection)
-      .snapshotChanges() 
-      .pipe(
-        map(this.convertSnapshots),
-        map((documents: T[]) =>
-          documents.filter(document => document.id == cartId)
-          .map(
-            document => {
-            return this.firestore
-              .collection(`${collection}/${document.id}/${subCollection}`)
-              .snapshotChanges()
-              .pipe(
-                map(this.convertSnapshots),
-                map(subdocuments =>
-                  Object.assign(document, { [subCollection]: subdocuments })
-                )
-              );
-          }
-          
-          
-          )
-        ),
-        flatMap(combined => combineLatest(combined))
-      );
+    console.log("getKortti called with cartId: ", cartId);
+    let carts = this.firestore.collection<ShoppingCart>('shopping-carts');
+    let carts$ = carts.snapshotChanges();
+    var cartList: ShoppingCart[] = [];
+    var items: Item[] = []
+
+    carts$.forEach(cart => {
+
+      cart.filter(a => a.payload.doc.id == cartId)  //filter only relevat shoppingCart
+        .forEach(a => {
+
+          let readItems = this.firestore.collection('shopping-carts').doc(cartId).collection<Item>('items');
+          let readItems$ = readItems.snapshotChanges();
+
+          //get items from 'items' subcollection
+          readItems$.pipe(flatMap(p => p)).subscribe(i => {
+            let data = i.payload.doc.data();
+            let id = i.payload.doc.id;
+            let item = { id, ...data } as Item;
+            items.push(item);
+          });
+
+          //get shopping cart from 'shopping-carts' collection
+          let data = a.payload.doc.data();
+          let id = a.payload.doc.id;
+          let cart = { id, ...data, items } as ShoppingCart;
+          cartList.push(cart);
+          //console.log("cart: ", cart);
+        })
+    });
+
+    console.log("cartList: ", cartList);
+    return of(cartList);
 
   }
 
-
   async addToCart(product: Product) {
     console.log("addToCart called...");
+
+    // this.getKortti();   //testausta varten
+
     let cartId = await this.getOrCreateCartId();
     console.log("cartId is: " + cartId + ", productId is: " + product.id);
     let document = this.getItem(cartId, product.id);
@@ -141,7 +141,7 @@ export class ShoppingCartService {
           let quantity = i.quantity - 1
           document.update({ quantity: quantity });
           console.log("quantity: ", quantity);
-        } 
+        }
       });
   }
 

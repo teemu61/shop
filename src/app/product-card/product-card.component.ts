@@ -2,7 +2,7 @@
 import { ShoppingCartService } from './../shopping-cart.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { Product } from '../models/product';
-import { filter } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-product-card',
@@ -33,12 +33,15 @@ export class ProductCardComponent {
 
     if (this.shoppingCart != undefined) {
 
+      //console.log("getQuantity called. this.shoppingCart is: ", this.shoppingCart);
+
       this.shoppingCart[0].items.forEach(e => {
         if (e.id === this.product.id) {
           quantity = e.quantity;
         }
       });
     }
+
     return quantity;
   }
 }
