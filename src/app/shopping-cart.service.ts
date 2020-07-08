@@ -113,7 +113,7 @@ export class ShoppingCartService {
       return cartList.pipe(
         map(items => items.filter(item => item.id == cartId)), 
         flatMap(items => items),
-        map(cart => new ShoppingCart(cart.items))
+        //map(cart => new ShoppingCart(cart.items))
       );
   }
 
