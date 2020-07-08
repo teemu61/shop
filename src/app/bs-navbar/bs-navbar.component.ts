@@ -1,9 +1,9 @@
+import { ShoppingCart } from './../models/shopping-cart';
 import { Observable, Subscription } from 'rxjs';
 import { ShoppingCartService } from './../shopping-cart.service';
 import { AuthService } from './../auth.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AppUser } from '../models/app-user';
-import { ShoppingCart } from '../models/shopping-cart';
 import { Item } from '../models/item';
 
 
@@ -30,7 +30,22 @@ export class BsNavbarComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+
+    console.log("ngOnInit called")
+    this.auth.appUser$.subscribe(appUser => {
+      this.isAdmin = appUser.isAdmin;
+    });
+
+
     let cart = await this.ShoppingCartService.getShoppingCart();
+    this.subscription = cart.subscribe(cart => {
+      this.itemCount = 0;
+      cart.items.forEach(item => {
+        console.log("add to itemCount ",item.quantity)
+        this.itemCount += item.quantity;
+        console.log("itemCount: ", this.itemCount)
+      })
+    })
   }
 
   ngOnDestroy() {

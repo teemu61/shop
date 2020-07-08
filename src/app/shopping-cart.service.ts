@@ -106,7 +106,7 @@ export class ShoppingCartService {
               .pipe(
                 map(this.convertSnapshots),
                 map(subdocuments =>
-                  Object.assign(document, { ["items"]: subdocuments })
+                  Object.assign(document, { ["items"]: subdocuments as Item[] })
                 )
               );      
           })
