@@ -37,4 +37,3 @@ export class BsNavbarComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 }
-

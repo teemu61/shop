@@ -10,7 +10,7 @@ import { regExpEscape } from '@ng-bootstrap/ng-bootstrap/util/util';
 import { database } from 'firebase';
 
 
-//interface DocWithId { id: string; }
+interface DocWithId { id: string; }
 
 @Injectable({
   providedIn: 'root'
@@ -78,7 +78,7 @@ export class ShoppingCartService {
   }
 
 
-  convertSnapshots<ShoppingCart>(snaps) {
+  convertSnapshots<T>(snaps) {
     return <T[]>snaps.map(snap => {
       let retValue = {
         id: snap.payload.doc.id,
@@ -88,7 +88,7 @@ export class ShoppingCartService {
     });
   }
 
-  async getShoppingCart<ShoppingCart>() {
+  async getShoppingCart<T extends DocWithId>() {
  
     let cartId = await this.getOrCreateCartId();
 
