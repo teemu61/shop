@@ -78,7 +78,7 @@ export class ShoppingCartService {
   }
 
 
-  convertSnapshots<T>(snaps) {
+  convertSnapshots<ShoppingCart>(snaps) {
     return <T[]>snaps.map(snap => {
       let retValue = {
         id: snap.payload.doc.id,
