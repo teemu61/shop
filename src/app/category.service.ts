@@ -13,7 +13,6 @@ export class CategoryService {
   constructor(private firestore: AngularFirestore) { }
 
   getAll() {
-      console.log("getCategories called....")
       return this.firestore
       .collection('categories')
       .snapshotChanges().pipe(map(actions => {

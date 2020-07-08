@@ -1,7 +1,11 @@
+import { Item } from './../models/item';
+import { ShoppingCart } from './../models/shopping-cart';
+import { Observable, Subscription } from 'rxjs';
 
 import { ShoppingCartService } from './../shopping-cart.service';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Product } from '../models/product';
+
 
 
 @Component({
@@ -9,11 +13,13 @@ import { Product } from '../models/product';
   templateUrl: './product-card.component.html',
   styleUrls: ['./product-card.component.css']
 })
-export class ProductCardComponent {
+export class ProductCardComponent implements OnInit, OnDestroy {
 
   @Input('product') product: Product;
   @Input('show-actions') showActions = true;
-  @Input('shopping-cart') shoppingCart;
+  subscription: Subscription;
+  quantity: number = 0;
+
 
   constructor(private cartService: ShoppingCartService) {
   }
@@ -27,21 +33,26 @@ export class ProductCardComponent {
   }
 
   getQuantity() {
-
     const productId = this.product.id;
-    let quantity: number = 0;
-
-    if (this.shoppingCart != undefined) {
-
-      //console.log("getQuantity called. this.shoppingCart is: ", this.shoppingCart);
-
-      this.shoppingCart[0].items.forEach(e => {
-        if (e.id === this.product.id) {
-          quantity = e.quantity;
-        }
-      });
-    }
-
-    return quantity;
+    return this.quantity;
   }
+
+  async ngOnInit() {
+
+    let cart = await this.cartService.getShoppingCart();
+    this.subscription = cart.subscribe(c => {
+
+      c.items.forEach(item => {
+        if (item.product.id == this.product.id) {
+          this.quantity = item.quantity;
+        }
+      })
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
 }
+

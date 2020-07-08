@@ -1,15 +1,16 @@
-import { AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/firestore';
+
 import { Item } from './models/item';
-import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection, DocumentChangeAction } from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { ShoppingCart } from './models/shopping-cart';
-import { Observable, combineLatest, of, from } from 'rxjs';
+import { Observable, combineLatest, of, from, EMPTY } from 'rxjs';
 import { Product } from './models/product';
-import { map, take, flatMap, filter, mergeMap } from 'rxjs/operators';
-import { ConvertActionBindingResult } from '@angular/compiler/src/compiler_util/expression_converter';
+import { map, take, flatMap, filter, mergeMap, switchMap, withLatestFrom, distinct, debounceTime, reduce } from 'rxjs/operators';
+import { regExpEscape } from '@ng-bootstrap/ng-bootstrap/util/util';
+import { database } from 'firebase';
 
 
-interface DocWithId { id: string; }
+//interface DocWithId { id: string; }
 
 @Injectable({
   providedIn: 'root'
@@ -37,14 +38,14 @@ export class ShoppingCartService {
   }
 
   private async getOrCreateCartId() {
-    console.log("getOrCreateCart called...");
     let cartId = localStorage.getItem('cartId');
 
     if (cartId) return cartId;
 
-    console.log("cardId not found form localStorage...");
+    console.log("cardId not found form localStorage");
     let result = await this.create();
     localStorage.setItem("cartId", result.id);
+
     return result.id;
   }
 
@@ -56,57 +57,73 @@ export class ShoppingCartService {
       .doc(productId)
   }
 
+  async getItems() {
+    let cartId = await this.getOrCreateCartId();
+    let itemList = []; 
+    console.log("getItems called using cardId: "+cartId);
+    let x = this.firestore.collection('shopping-carts')
+      .doc(cartId).collection('items').snapshotChanges();
+""
+    x.subscribe(n =>{
+      n.map(a => {
+        let data = a.payload.doc.data()
+        let id = a.payload.doc.id;
+        let item = {id, ...data};
+        return item;
+      }).map(i => {
+        itemList.push(i)
+      })
+    })
+    return from(itemList);
+  }
+
+
   convertSnapshots<T>(snaps) {
     return <T[]>snaps.map(snap => {
-      return {
+      let retValue = {
         id: snap.payload.doc.id,
         ...snap.payload.doc.data()
       };
+      return retValue;
     });
   }
 
-  async getKortti<ShoppingCart>() {
+  async getShoppingCart<ShoppingCart>() {
+ 
     let cartId = await this.getOrCreateCartId();
-    console.log("getKortti called with cartId: ", cartId);
-    let carts = this.firestore.collection<ShoppingCart>('shopping-carts');
-    let carts$ = carts.snapshotChanges();
-    var cartList: ShoppingCart[] = [];
-    var items: Item[] = []
 
-    carts$.forEach(cart => {
+    let cartList = this.firestore
+      .collection('shopping-carts')
+      .snapshotChanges()
+      .pipe(
+        map(this.convertSnapshots),
+        map((documents: T[]) =>
+          documents.map(document => {
+  
+            return this.firestore
+              .collection(`shopping-carts/${document.id}/items`)
+              .snapshotChanges()
+              .pipe(
+                map(this.convertSnapshots),
+                map(subdocuments =>
+                  Object.assign(document, { ["items"]: subdocuments })
+                )
+              );      
+          })
+        ),
+        flatMap(combined => combineLatest(combined)),
+      );
 
-      cart.filter(a => a.payload.doc.id == cartId)  //filter only relevat shoppingCart
-        .forEach(a => {
-
-          let readItems = this.firestore.collection('shopping-carts').doc(cartId).collection<Item>('items');
-          let readItems$ = readItems.snapshotChanges();
-
-          //get items from 'items' subcollection
-          readItems$.pipe(flatMap(p => p)).subscribe(i => {
-            let data = i.payload.doc.data();
-            let id = i.payload.doc.id;
-            let item = { id, ...data } as Item;
-            items.push(item);
-          });
-
-          //get shopping cart from 'shopping-carts' collection
-          let data = a.payload.doc.data();
-          let id = a.payload.doc.id;
-          let cart = { id, ...data, items } as ShoppingCart;
-          cartList.push(cart);
-          //console.log("cart: ", cart);
-        })
-    });
-
-    console.log("cartList: ", cartList);
-    return of(cartList);
-
+      //extract only the shopping card with specific cartId
+      return cartList.pipe(
+        map(items => items.filter(item => item.id == cartId)), 
+        flatMap(items => items)
+      );
   }
+
 
   async addToCart(product: Product) {
-    console.log("addToCart called...");
-
-    // this.getKortti();   //testausta varten
+    console.log("addToCart called");
 
     let cartId = await this.getOrCreateCartId();
     console.log("cartId is: " + cartId + ", productId is: " + product.id);
@@ -119,12 +136,12 @@ export class ShoppingCartService {
           let i = action.payload.data() as Item;
           let quantity = i.quantity + 1
           document.update({ quantity: quantity });
-          console.log("quantity: ", quantity);
         } else {
           document.set({ quantity: 1, product: product });
           console.log("new product added to shopping-cart");
         }
       });
+
   }
 
   async removeFromCart(product: Product) {
