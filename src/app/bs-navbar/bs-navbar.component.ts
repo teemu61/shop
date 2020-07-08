@@ -13,11 +13,10 @@ import { Item } from '../models/item';
   styleUrls: ['./bs-navbar.component.css']
 })
 
-export class BsNavbarComponent implements OnInit, OnDestroy {
+export class BsNavbarComponent implements OnInit {
   appUser: AppUser;
   isAdmin: boolean;
-  itemCount: number;
-  subscription: Subscription;
+  cart$: Observable<ShoppingCart>;
 
   constructor(public auth: AuthService, private ShoppingCartService: ShoppingCartService) {
     auth.appUser$.subscribe(appUser => {
@@ -25,30 +24,12 @@ export class BsNavbarComponent implements OnInit, OnDestroy {
     });
   }
 
-  logout() {
-    this.auth.logout();
+  logout() { 
+    this.auth.logout(); 
   }
 
   async ngOnInit() {
-
-    console.log("ngOnInit called")
-    this.auth.appUser$.subscribe(appUser => {
-      this.isAdmin = appUser.isAdmin;
-    });
-
-
-    let cart = await this.ShoppingCartService.getShoppingCart();
-    this.subscription = cart.subscribe(cart => {
-      this.itemCount = 0;
-      cart.items.forEach(item => {
-        console.log("add to itemCount ",item.quantity)
-        this.itemCount += item.quantity;
-        console.log("itemCount: ", this.itemCount)
-      })
-    })
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.auth.appUser$.subscribe(appUser => this.isAdmin = appUser.isAdmin);
+    this.cart$ = await this.ShoppingCartService.getShoppingCart();
   }
 }

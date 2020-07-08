@@ -17,8 +17,7 @@ interface DocWithId { id: string; }
 })
 export class ShoppingCartService {
 
-  constructor(private firestore: AngularFirestore) {
-  }
+  constructor(private firestore: AngularFirestore) {}
 
   private create() {
 
@@ -31,7 +30,7 @@ export class ShoppingCartService {
       .doc(id)
       .set(cart)
       .then(() => {
-        let shoppingCart: ShoppingCart = { id: id, dateCreated: cart.dateCreated, items: [] };
+        let shoppingCart: ShoppingCart = { id: id, dateCreated: cart.dateCreated, items: [], totalItemsCount: null };
         return shoppingCart;
       });
     return promise;
@@ -39,7 +38,6 @@ export class ShoppingCartService {
 
   private async getOrCreateCartId() {
     let cartId = localStorage.getItem('cartId');
-
     if (cartId) return cartId;
 
     console.log("cardId not found form localStorage");
@@ -60,8 +58,7 @@ export class ShoppingCartService {
   async getItems() {
     let cartId = await this.getOrCreateCartId();
     let itemList = []; 
-    console.log("getItems called using cardId: "+cartId);
-    let x = this.firestore.collection('shopping-carts')
+    let x = this.firestore.collection('shopping-carge')
       .doc(cartId).collection('items').snapshotChanges();
 ""
     x.subscribe(n =>{
@@ -77,9 +74,8 @@ export class ShoppingCartService {
     return from(itemList);
   }
 
-
-  convertSnapshots<T>(snaps) {
-    return <T[]>snaps.map(snap => {
+  convertSnapshots<ShoppingCart>(snaps) {
+    return <ShoppingCart[]>snaps.map(snap => {
       let retValue = {
         id: snap.payload.doc.id,
         ...snap.payload.doc.data()
@@ -88,7 +84,7 @@ export class ShoppingCartService {
     });
   }
 
-  async getShoppingCart<T extends DocWithId>() {
+  async getShoppingCart<ShoppingCart extends DocWithId>() {
  
     let cartId = await this.getOrCreateCartId();
 
@@ -97,9 +93,8 @@ export class ShoppingCartService {
       .snapshotChanges()
       .pipe(
         map(this.convertSnapshots),
-        map((documents: T[]) =>
+        map((documents: ShoppingCart[]) =>
           documents.map(document => {
-  
             return this.firestore
               .collection(`shopping-carts/${document.id}/items`)
               .snapshotChanges()
@@ -117,16 +112,15 @@ export class ShoppingCartService {
       //extract only the shopping card with specific cartId
       return cartList.pipe(
         map(items => items.filter(item => item.id == cartId)), 
-        flatMap(items => items)
+        flatMap(items => items),
+        map(cart => new ShoppingCart(cart.items))
       );
   }
 
 
   async addToCart(product: Product) {
     console.log("addToCart called");
-
     let cartId = await this.getOrCreateCartId();
-    console.log("cartId is: " + cartId + ", productId is: " + product.id);
     let document = this.getItem(cartId, product.id);
 
     document.snapshotChanges()
@@ -145,9 +139,8 @@ export class ShoppingCartService {
   }
 
   async removeFromCart(product: Product) {
-    console.log("removeFromCart called...");
+    console.log("removeFromCart called");
     let cartId = await this.getOrCreateCartId();
-    console.log("cartId is: " + cartId + ", productId is: " + product.id);
     let document = this.getItem(cartId, product.id);
 
     document.snapshotChanges()
@@ -157,17 +150,8 @@ export class ShoppingCartService {
           let i = action.payload.data() as Item;
           let quantity = i.quantity - 1
           document.update({ quantity: quantity });
-          console.log("quantity: ", quantity);
         }
       });
   }
 
-  private getCart(cartId: string) {
-    console.log("getCart called...");
-    let promise = this.firestore.collection('shopping-carts').doc(cartId).get().toPromise()
-      .then((snapshot) => {
-        return snapshot.data() as ShoppingCart;
-      });
-    return promise;
-  }
 }
