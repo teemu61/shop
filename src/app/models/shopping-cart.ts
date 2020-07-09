@@ -4,9 +4,9 @@ import { Item } from './item';
 export class ShoppingCart {
     id: string;
     dateCreated: number;
-    items: Item[];
+    //items: Item[];
     
-    //constructor(public items: Item[]) {}
+    constructor(public items: Item[]) {}
 
     get totalItemsCount() {
       let count = 0;
