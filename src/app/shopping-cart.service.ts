@@ -76,11 +76,7 @@ export class ShoppingCartService {
 
   convertSnapshots<ShoppingCart>(snaps) {
     return <ShoppingCart[]>snaps.map(snap => {
-      let retValue = {
-        id: snap.payload.doc.id,
-        ...snap.payload.doc.data()
-      };
-      return retValue;
+      return { id: snap.payload.doc.id, ...snap.payload.doc.data() };
     });
   }
 
