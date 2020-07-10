@@ -30,7 +30,7 @@ export class ShoppingCartService {
       .doc(id)
       .set(cart)
       .then(() => {
-        let shoppingCart: ShoppingCart = { id: id, dateCreated: cart.dateCreated, items: [], totalItemsCount: null };
+        let shoppingCart: ShoppingCart = { id: id, dateCreated: cart.dateCreated, items: [], totalItemsCount: null, productIds: null };
         return shoppingCart;
       });
     return promise;
