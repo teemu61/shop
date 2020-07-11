@@ -8,20 +8,23 @@
             <tr>
                 <th>Product</th>
                 <th>Quantity</th>
-                <th></th>
+                <th>Price</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let productId of cart.productIds">
-                <td>
-                    {{ cart.items[productId].product.title }}
-                </td>
-                <td>{{ cart.items[productId].quantity }}
-
-                </td>
-                <td></td>
+                <td> {{ cart.items[productId].product.title }} </td>
+                <td> {{ cart.items[productId].quantity }} </td>
+                <td> {{ cart.items[productId].product.price * cart.items[productId].quantity | currency: 'EUR':true }} </td>
             </tr>
         </tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th></th>
+                <th>{{ cart.totalPrice| currency: 'EUR':true  }} </th>
+            </tr>
+        </tfoot>
     </table> 
 </ng-container>
 
