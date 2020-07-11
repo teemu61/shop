@@ -12,11 +12,13 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let productId of cart.productIds">
-                <td> {{ cart.items[productId].product.title }} </td>
-                <td> {{ cart.items[productId].quantity }} </td>
-                <td> {{ cart.items[productId].product.price * cart.items[productId].quantity | currency: 'EUR':true }} </td>
-            </tr>
+            <ng-container *ngFor="let productId of cart.productIds">
+                <tr *ngIf="cart.items[productId].quantity > 0" >
+                    <td> {{ cart.items[productId].product.title }} </td>
+                    <td> {{ cart.items[productId].quantity }} </td>
+                    <td> {{ cart.items[productId].product.price * cart.items[productId].quantity | currency: 'EUR':true }} </td>
+                </tr>
+            </ng-container>
         </tbody>
         <tfoot>
             <tr>
